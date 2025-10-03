@@ -11,7 +11,7 @@ import warnings
 
 import paramiko
 from paramiko import SSHException, AuthenticationException   # make available
-from paramiko import AgentKey, RSAKey, DSSKey
+from paramiko import AgentKey, RSAKey
 
 from pysftp.exceptions import (CredentialException, ConnectionException,
                                HostKeysException)
@@ -168,13 +168,8 @@ class Connection(object):   # pylint:disable=r0902,r0904
                 # isn't a paramiko AgentKey or RSAKey, try to build a
                 # key from what we assume is a path to a key
                 private_key_file = os.path.expanduser(private_key)
-                try:  # try rsa
-                    self._tconnect['pkey'] = RSAKey.from_private_key_file(
-                        private_key_file, private_key_pass)
-                except paramiko.SSHException:   # if it fails, try dss
-                    # pylint:disable=r0204
-                    self._tconnect['pkey'] = DSSKey.from_private_key_file(
-                        private_key_file, private_key_pass)
+                self._tconnect['pkey'] = RSAKey.from_private_key_file(
+                    private_key_file, private_key_pass)
 
     def _start_transport(self, host, port):
         '''start the transport and set the ciphers if specified.'''
